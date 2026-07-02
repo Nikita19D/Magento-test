@@ -20,7 +20,6 @@ def create_item(item:str):
     return item
 
 
-
 """client = genai.Client(api_key=os.getenv("API_KEY"))
 
 interaction = client.interactions.create(
