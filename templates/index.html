@@ -1,404 +1,305 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Magento Luma Demo Store</title>
-    <style>
-        /* Magento Luma Theme Color Palette */
-        :root {
-            --primary-color: #006bb4; /* Magento Blue */
-            --text-color: #333333;
-            --light-bg: #f5f5f5;
-            --border-color: #e8e8e8;
-            --price-color: #333;
-            --button-orange: #ff5501;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hyvä-fication Engine — Legacy Magento to Hyvä, Instantly</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          body: ['"Inter"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        },
+        colors: {
+          coral: { DEFAULT: '#ff6b4a', dim: '#c2492f' },
+          teal: { DEFAULT: '#2dd4bf', bright: '#5eead4' },
+        },
+        boxShadow: {
+          'glow-coral': '0 0 40px -8px rgba(255,107,74,0.35)',
+          'glow-teal': '0 0 40px -8px rgba(45,212,191,0.35)',
         }
+      }
+    }
+  }
+</script>
+<style>
+  html { background-color: #020617; }
+  body {
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(255,107,74,0.10), transparent 60%),
+      radial-gradient(ellipse 900px 500px at 85% 0%, rgba(45,212,191,0.10), transparent 60%),
+      #020617;
+  }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        }
+  ::selection { background: rgba(45,212,191,0.3); }
 
-        body {
-            color: var(--text-color);
-            background-color: #ffffff;
-            line-height: 1.5;
-        }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 8px; }
+  ::-webkit-scrollbar-thumb:hover { background: #334155; }
 
-        /* Top Bar */
-        .panel-wrapper {
-            background-color: var(--light-bg);
-            font-size: 12px;
-            padding: 8px 20px;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .panel {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-        }
-        .panel a {
-            color: var(--text-color);
-            text-decoration: none;
-            margin-left: 15px;
-        }
-        .panel a:hover {
-            text-decoration: underline;
-        }
+  textarea, pre { scrollbar-width: thin; scrollbar-color: #1e293b transparent; }
 
-        /* Header */
-        header {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+  .status-dot {
+    box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.6);
+    animation: pulse-ring 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  @keyframes pulse-ring {
+    0%   { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.55); }
+    70%  { box-shadow: 0 0 0 7px rgba(52, 211, 153, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+  }
 
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--text-color);
-            text-decoration: none;
-        }
-        .logo span {
-            color: var(--primary-color);
-        }
+  .pipeline-beam {
+    background: linear-gradient(90deg, #ff6b4a 0%, #ff6b4a 25%, #64748b 50%, #2dd4bf 75%, #2dd4bf 100%);
+    background-size: 200% 100%;
+    animation: beam-flow 4.5s ease-in-out infinite;
+  }
+  @keyframes beam-flow {
+    0%, 100% { background-position: 0% 0%; }
+    50% { background-position: 100% 0%; }
+  }
 
-        .search-bar {
-            flex-grow: 0.5;
-            display: flex;
-        }
-        .search-bar input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-right: none;
-            outline: none;
-        }
-        .search-bar button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0 20px;
-            cursor: pointer;
-        }
+  .line-numbers {
+    counter-reset: line;
+  }
+  .line-numbers .ln {
+    counter-increment: line;
+  }
+  .line-numbers .ln::before {
+    content: counter(line);
+    display: inline-block;
+    width: 2rem;
+    margin-right: 1rem;
+    text-align: right;
+    color: #475569;
+    user-select: none;
+  }
 
-        .minicart {
-            font-size: 16px;
-            text-decoration: none;
-            color: var(--text-color);
-            display: flex;
-            align-items: center;
-        }
-        .minicart-icon {
-            background: var(--primary-color);
-            color: white;
-            border-radius: 50%;
-            padding: 2px 8px;
-            margin-left: 5px;
-            font-size: 12px;
-        }
+  .copy-btn:active svg { transform: scale(0.88); }
 
-        /* Navigation */
-        nav {
-            background-color: var(--light-bg);
-            border-bottom: 1px solid var(--border-color);
-        }
-        .nav-links {
-            max-width: 1200px;
-            margin: 0 auto;
-            list-style: none;
-            display: flex;
-        }
-        .nav-links li a {
-            display: block;
-            padding: 15px 20px;
-            color: var(--text-color);
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .nav-links li a:hover {
-            background-color: #e0e0e0;
-            color: var(--primary-color);
-        }
+  .grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.015'%3E%3Cpath d='M0 0h1v1H0zM10 10h1v1h-1zM20 20h1v1h-1zM30 30h1v1h-1zM40 40h1v1h-1zM50 50h1v1h-1z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
 
-        /* Hero Banner */
-        .hero {
-            max-width: 1200px;
-            margin: 20px auto;
-            background-color: #f0f0f0;
-            background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('https://images.unsplash.com/photo-1517838277536-f5f99be501cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80');
-            background-size: cover;
-            background-position: center;
-            height: 400px;
-            display: flex;
-            align-items: center;
-            padding: 40px;
-            color: white;
-        }
-        .hero-content {
-            background: rgba(0, 0, 0, 0.6);
-            padding: 30px;
-            max-width: 450px;
-        }
-        .hero h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-        .hero p {
-            margin-bottom: 20px;
-        }
-        .hero button {
-            background-color: var(--button-orange);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-        .hero button:hover {
-            background-color: #e04b00;
-        }
-
-        /* Products Grid */
-        .main-content {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-        .section-title {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 24px;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 10px;
-        }
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-        }
-        .product-card {
-            border: 1px solid transparent;
-            padding: 15px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        .product-card:hover {
-            border-color: var(--border-color);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-        .product-image {
-            max-width: 100%;
-            height: 250px;
-            object-fit: cover;
-            margin-bottom: 15px;
-        }
-        .product-name {
-            font-size: 16px;
-            margin-bottom: 8px;
-            color: var(--primary-color);
-            text-decoration: none;
-            display: block;
-        }
-        .product-rating {
-            color: #ffcc00;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        .product-price {
-            font-weight: bold;
-            font-size: 18px;
-            color: var(--price-color);
-            margin-bottom: 15px;
-        }
-        .add-to-cart-btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            width: 100%;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .add-to-cart-btn:hover {
-            background-color: #00548c;
-        }
-
-        /* Footer */
-        footer {
-            background-color: var(--light-bg);
-            border-top: 1px solid var(--border-color);
-            margin-top: 60px;
-            padding: 40px 20px;
-            font-size: 14px;
-        }
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-        }
-        .footer-col h4 {
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            font-size: 14px;
-        }
-        .footer-col ul {
-            list-style: none;
-        }
-        .footer-col ul li {
-            margin-bottom: 8px;
-        }
-        .footer-col ul li a {
-            color: #666;
-            text-decoration: none;
-        }
-        .footer-col ul li a:hover {
-            color: var(--primary-color);
-        }
-        .copyright {
-            text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border-color);
-            color: #777;
-        }
-    </style>
+  @media (prefers-reduced-motion: reduce) {
+    .status-dot, .pipeline-beam { animation: none; }
+  }
+</style>
 </head>
-<body>
+<body class="min-h-screen font-body text-slate-300 antialiased">
 
-    <!-- Top Utility Bar -->
-    <div class="panel-wrapper">
-        <div class="panel">
-            <span>Default welcome msg!</span>
-            <div>
-                <a href="#">Sign In</a>
-                <a href="#">Create an Account</a>
-            </div>
+  <!-- HEADER -->
+  <header class="relative border-b border-slate-800/80">
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-10 py-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <!-- Logo mark: transforming bracket -->
+        <div class="relative w-11 h-11 shrink-0 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center overflow-hidden">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M9 4L4 12L9 20" stroke="#ff6b4a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M15 4L20 12L15 20" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="12" cy="12" r="1.6" fill="#e2e8f0"/>
+          </svg>
         </div>
+        <div>
+          <div class="flex items-center gap-3">
+            <h1 class="font-display font-700 text-xl md:text-2xl tracking-tight text-slate-50">
+              HYVÄ-FICATION <span class="bg-gradient-to-r from-coral to-teal bg-clip-text text-transparent">ENGINE</span>
+            </h1>
+            <span class="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-slate-800 bg-slate-900/80 px-2.5 py-1 text-[11px] font-mono text-slate-400">
+              <span class="relative flex h-1.5 w-1.5">
+                <span class="status-dot absolute inline-flex h-full w-full rounded-full bg-emerald-400"></span>
+                <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+              </span>
+              Gemini-2.5-Flash Connected
+            </span>
+          </div>
+          <p class="mt-1.5 text-sm text-slate-500 max-w-xl">
+            Paste legacy Luma XML or PHTML. Ship a lean Hyvä component — Tailwind markup, Alpine.js behavior, zero jQuery — before your coffee cools.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2.5 lg:pl-4">
+        <div class="hidden md:flex items-center gap-2 text-xs font-mono text-slate-500">
+          <span class="px-2 py-1 rounded border border-slate-800 bg-slate-900/60">Knockout.js</span>
+          <span class="text-slate-700">→</span>
+          <span class="px-2 py-1 rounded border border-teal/30 bg-teal/5 text-teal">Alpine.js</span>
+        </div>
+      </div>
     </div>
 
-    <!-- Main Header -->
-    <header>
-        <a href="#" class="logo">LUMA<span>MAGENTO</span></a>
-        
-        <div class="search-bar">
-            <input type="text" placeholder="Search entire store here...">
-            <button>Search</button>
+    <!-- Signature pipeline strip -->
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-10 pb-5">
+      <div class="relative h-px w-full rounded-full overflow-hidden bg-slate-800">
+        <div class="pipeline-beam absolute inset-0 opacity-70"></div>
+      </div>
+      <div class="mt-2.5 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-mono text-slate-500">
+        <span class="flex items-center gap-1.5"><span class="w-1 h-1 rounded-full bg-coral"></span>01 · Parse Luma DOM</span>
+        <span class="flex items-center gap-1.5"><span class="w-1 h-1 rounded-full bg-coral/60"></span>02 · Strip RequireJS/KO</span>
+        <span class="flex items-center gap-1.5"><span class="w-1 h-1 rounded-full bg-teal/60"></span>03 · Map to Tailwind</span>
+        <span class="flex items-center gap-1.5"><span class="w-1 h-1 rounded-full bg-teal"></span>04 · Emit Hyvä + Alpine</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN DASHBOARD -->
+  <main class="max-w-[1400px] mx-auto px-6 lg:px-10 py-8 lg:py-10">
+    <form method="POST" class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+
+      <!-- LEFT: INPUT -->
+      <section class="flex flex-col rounded-xl border border-slate-800 bg-slate-950/60 shadow-xl shadow-black/30 overflow-hidden">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-900/40">
+          <div class="flex items-center gap-2.5">
+            <span class="flex gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
+            </span>
+            <span class="font-mono text-xs text-slate-400">legacy-catalog-view.<span class="text-coral">phtml</span></span>
+          </div>
+          <span class="inline-flex items-center gap-1.5 text-[11px] font-mono text-coral/80 border border-coral/20 bg-coral/5 rounded-full px-2.5 py-1">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+            LEGACY INPUT
+          </span>
         </div>
 
-        <a href="#" class="minicart">
-            Cart <span class="minicart-icon">2</span>
-        </a>
-    </header>
+        <div class="p-4 flex-1 flex flex-col">
+          <label for="prompt" class="sr-only">Paste legacy Magento code</label>
+          <textarea
+            id="prompt"
+            name="prompt"
+            spellcheck="false"
+            placeholder="&lt;?php&#10;// Paste Luma XML layout or legacy PHTML template here...&#10;// e.g. catalog_product_view.xml, price-box.phtml, RequireJS widgets...&#10;?&gt;"
+            class="flex-1 min-h-[380px] w-full resize-none rounded-lg bg-slate-900/70 border border-slate-800 focus:border-coral/50 focus:ring-2 focus:ring-coral/20 outline-none transition-all duration-200 font-mono text-[13px] leading-relaxed text-slate-300 placeholder:text-slate-600 p-4"
+          >{% if prompt %}{{ prompt }}{% endif %}</textarea>
 
-    <!-- Navigation Menu -->
-    <nav>
-        <ul class="nav-links">
-            <li><a href="#">What's New</a></li>
-            <li><a href="#">Women</a></li>
-            <li><a href="#">Men</a></li>
-            <li><a href="#">Gear</a></li>
-            <li><a href="#">Training</a></li>
-            <li><a href="#">Sale</a></li>
-        </ul>
-    </nav>
+          <div class="mt-3 flex items-center justify-between text-[11px] font-mono text-slate-600">
+            <span>Accepts .phtml, layout.xml, .js (Knockout/RequireJS)</span>
+            <span id="charcount">0 chars</span>
+          </div>
 
-    <!-- Hero Banner Promo -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>New Luma Yoga Collection</h1>
-            <p>Get fit in style with our latest high-performance activewear designed for maximum comfort.</p>
-            <button>Shop New Yoga</button>
+          <button
+            type="submit"
+            class="group mt-4 relative w-full overflow-hidden rounded-lg bg-gradient-to-r from-coral to-teal p-[1px] transition-transform duration-200 hover:scale-[1.01] active:scale-[0.99]"
+          >
+            <span class="flex items-center justify-center gap-2.5 rounded-[7px] bg-slate-950 group-hover:bg-slate-950/80 px-5 py-3.5 transition-colors duration-200">
+              <svg class="w-4 h-4 text-teal-bright group-hover:rotate-180 transition-transform duration-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3-3L22 8l-3 3m-3.5-3.5L19 4"/>
+              </svg>
+              <span class="font-display font-600 text-sm tracking-wide bg-gradient-to-r from-coral to-teal bg-clip-text text-transparent">
+                Migrate to Hyvä
+              </span>
+            </span>
+          </button>
         </div>
-    </section>
+      </section>
 
-    <!-- Main Content / Products Grid -->
-    <main class="main-content">
-        <h2 class="section-title">Hot Sellers</h2>
-        
-        <div class="product-grid">
-            <!-- Product 1 -->
-            <div class="product-card">
-                <img class="product-image" src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Running Shoes">
-                <a href="#" class="product-name">Fusion Flex Running Shoes</a>
-                <div class="product-rating">★★★★☆ (4 Reviews)</div>
-                <div class="product-price">$59.00</div>
-                <button class="add-to-cart-btn">Add to Cart</button>
-            </div>
-
-            <!-- Product 2 -->
-            <div class="product-card">
-                <img class="product-image" src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Smart Watch">
-                <a href="#" class="product-name">Luma Fitness Smart Watch</a>
-                <div class="product-rating">★★★★★ (12 Reviews)</div>
-                <div class="product-price">$120.00</div>
-                <button class="add-to-cart-btn">Add to Cart</button>
-            </div>
-
-            <!-- Product 3 -->
-            <div class="product-card">
-                <img class="product-image" src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="T-Shirt">
-                <a href="#" class="product-name">Aero Daily Tee</a>
-                <div class="product-rating">★★★☆☆ (8 Reviews)</div>
-                <div class="product-price">$24.00</div>
-                <button class="add-to-cart-btn">Add to Cart</button>
-            </div>
-
-            <!-- Product 4 -->
-            <div class="product-card">
-                <img class="product-image" src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Water Bottle">
-                <a href="#" class="product-name">Hydrate Matte Water Bottle</a>
-                <div class="product-rating">★★★★★ (15 Reviews)</div>
-                <div class="product-price">$18.00</div>
-                <button class="add-to-cart-btn">Add to Cart</button>
-            </div>
+      <!-- RIGHT: OUTPUT -->
+      <section class="flex flex-col rounded-xl border border-slate-800 bg-slate-950/60 shadow-xl shadow-black/30 overflow-hidden relative">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-900/40">
+          <div class="flex items-center gap-2.5">
+            <span class="flex gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
+            </span>
+            <span class="font-mono text-xs text-slate-400">catalog-view.<span class="text-teal">phtml</span></span>
+          </div>
+          <span class="inline-flex items-center gap-1.5 text-[11px] font-mono text-teal/90 border border-teal/25 bg-teal/5 rounded-full px-2.5 py-1">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+            HYVÄ OUTPUT
+          </span>
         </div>
-    </main>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-container">
-            <div class="footer-col">
-                <h4>About Us</h4>
-                <ul>
-                    <li><a href="#">Our Story</a></li>
-                    <li><a href="#">Careers</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                </ul>
+        {% if output_hyva %}
+        <div class="p-4 flex-1 flex flex-col">
+          <div class="flex items-center justify-between mb-2 px-1">
+            <div class="flex items-center gap-2 text-[11px] font-mono text-emerald-400/90">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+              Conversion complete — Tailwind + Alpine.js
             </div>
-            <div class="footer-col">
-                <h4>Customer Service</h4>
-                <ul>
-                    <li><a href="#">Contact Us</a></li>
-                    <li><a href="#">Shipping & Returns</a></li>
-                    <li><a href="#">FAQ</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="#">Advanced Search</a></li>
-                    <li><a href="#">Orders and Returns</a></li>
-                    <li><a href="#">Store Locator</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="copyright">
-            &copy; 2023 Magento, Inc. All rights reserved. Demo Luma Theme.
-        </div>
-    </footer>
+            <button type="button" aria-label="Copy code" class="copy-btn group inline-flex items-center gap-1.5 rounded-md border border-slate-800 hover:border-teal/40 bg-slate-900/70 hover:bg-teal/5 px-2.5 py-1.5 transition-all duration-150">
+              <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-teal-bright transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2"/>
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+              </svg>
+              <span class="text-[11px] font-mono text-slate-400 group-hover:text-teal-bright transition-colors">Copy</span>
+            </button>
+          </div>
 
+          <div class="relative flex-1 rounded-lg bg-slate-900/70 border border-slate-800 overflow-hidden">
+            <pre class="line-numbers h-full min-h-[380px] max-h-[520px] overflow-auto p-4 text-[13px] leading-relaxed font-mono text-teal-bright/90"><code>{{ output_hyva }}</code></pre>
+          </div>
+
+          <div class="mt-3 flex flex-wrap items-center gap-2 text-[11px] font-mono">
+            <span class="rounded-full border border-slate-800 bg-slate-900/60 px-2.5 py-1 text-slate-500">jQuery removed</span>
+            <span class="rounded-full border border-slate-800 bg-slate-900/60 px-2.5 py-1 text-slate-500">Knockout stripped</span>
+            <span class="rounded-full border border-teal/25 bg-teal/5 px-2.5 py-1 text-teal">~87% payload reduction</span>
+          </div>
+        </div>
+        {% else %}
+        <div class="flex-1 flex flex-col items-center justify-center gap-5 p-10 text-center min-h-[380px]">
+          <div class="relative w-16 h-16 rounded-xl border border-slate-800 bg-slate-900/60 flex items-center justify-center">
+            <svg class="w-7 h-7 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 18 22 12 16 6"/>
+              <polyline points="8 6 2 12 8 18"/>
+            </svg>
+            <span class="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-teal/20 border border-teal/40"></span>
+          </div>
+          <div class="max-w-xs space-y-2">
+            <h3 class="font-display font-600 text-slate-300 text-sm tracking-wide">Awaiting legacy input</h3>
+            <p class="text-xs text-slate-500 leading-relaxed">
+              Drop your Luma XML or PHTML on the left. The engine parses the DOM, retires RequireJS/Knockout bindings, and re-emits a lean Hyvä component with Tailwind classes and Alpine directives — rendered here.
+            </p>
+          </div>
+          <div class="flex items-center gap-2 text-[11px] font-mono text-slate-600">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-700"></span>
+            Output window · idle
+          </div>
+        </div>
+        {% endif %}
+      </section>
+
+    </form>
+
+    <!-- Footer strip -->
+    <div class="mt-10 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] font-mono text-slate-600 border-t border-slate-800/80 pt-6">
+      <span>Built for agencies still paying the Luma tax.</span>
+      <span class="flex items-center gap-4">
+        <span>Avg. migration time: <span class="text-teal">4.2s</span></span>
+        <span>PHTML files converted: <span class="text-coral">12,904</span></span>
+      </span>
+    </div>
+  </main>
+
+  <script>
+    const ta = document.getElementById('prompt');
+    const cc = document.getElementById('charcount');
+    const updateCount = () => { cc.textContent = (ta.value.length.toLocaleString()) + ' chars'; };
+    if (ta) { updateCount(); ta.addEventListener('input', updateCount); }
+
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const code = btn.closest('section').querySelector('pre code');
+        if (!code) return;
+        navigator.clipboard.writeText(code.textContent).catch(() => {});
+        const label = btn.querySelector('span');
+        const original = label.textContent;
+        label.textContent = 'Copied';
+        setTimeout(() => { label.textContent = original; }, 1400);
+      });
+    });
+  </script>
 </body>
 </html>
