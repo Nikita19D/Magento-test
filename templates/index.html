@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magento Luma Demo Store</title>
+    <style>
+        /* Magento Luma Theme Color Palette */
+        :root {
+            --primary-color: #006bb4; /* Magento Blue */
+            --text-color: #333333;
+            --light-bg: #f5f5f5;
+            --border-color: #e8e8e8;
+            --price-color: #333;
+            --button-orange: #ff5501;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            color: var(--text-color);
+            background-color: #ffffff;
+            line-height: 1.5;
+        }
+
+        /* Top Bar */
+        .panel-wrapper {
+            background-color: var(--light-bg);
+            font-size: 12px;
+            padding: 8px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .panel {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+        }
+        .panel a {
+            color: var(--text-color);
+            text-decoration: none;
+            margin-left: 15px;
+        }
+        .panel a:hover {
+            text-decoration: underline;
+        }
+
+        /* Header */
+        header {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+        .logo span {
+            color: var(--primary-color);
+        }
+
+        .search-bar {
+            flex-grow: 0.5;
+            display: flex;
+        }
+        .search-bar input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-right: none;
+            outline: none;
+        }
+        .search-bar button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            cursor: pointer;
+        }
+
+        .minicart {
+            font-size: 16px;
+            text-decoration: none;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+        }
+        .minicart-icon {
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            padding: 2px 8px;
+            margin-left: 5px;
+            font-size: 12px;
+        }
+
+        /* Navigation */
+        nav {
+            background-color: var(--light-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .nav-links {
+            max-width: 1200px;
+            margin: 0 auto;
+            list-style: none;
+            display: flex;
+        }
+        .nav-links li a {
+            display: block;
+            padding: 15px 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .nav-links li a:hover {
+            background-color: #e0e0e0;
+            color: var(--primary-color);
+        }
+
+        /* Hero Banner */
+        .hero {
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: #f0f0f0;
+            background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('https://images.unsplash.com/photo-1517838277536-f5f99be501cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            padding: 40px;
+            color: white;
+        }
+        .hero-content {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            max-width: 450px;
+        }
+        .hero h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .hero p {
+            margin-bottom: 20px;
+        }
+        .hero button {
+            background-color: var(--button-orange);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .hero button:hover {
+            background-color: #e04b00;
+        }
+
+        /* Products Grid */
+        .main-content {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        .product-card {
+            border: 1px solid transparent;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .product-card:hover {
+            border-color: var(--border-color);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .product-image {
+            max-width: 100%;
+            height: 250px;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+        .product-name {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: block;
+        }
+        .product-rating {
+            color: #ffcc00;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .product-price {
+            font-weight: bold;
+            font-size: 18px;
+            color: var(--price-color);
+            margin-bottom: 15px;
+        }
+        .add-to-cart-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            width: 100%;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .add-to-cart-btn:hover {
+            background-color: #00548c;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--light-bg);
+            border-top: 1px solid var(--border-color);
+            margin-top: 60px;
+            padding: 40px 20px;
+            font-size: 14px;
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+        .footer-col h4 {
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+        .footer-col ul {
+            list-style: none;
+        }
+        .footer-col ul li {
+            margin-bottom: 8px;
+        }
+        .footer-col ul li a {
+            color: #666;
+            text-decoration: none;
+        }
+        .footer-col ul li a:hover {
+            color: var(--primary-color);
+        }
+        .copyright {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Utility Bar -->
+    <div class="panel-wrapper">
+        <div class="panel">
+            <span>Default welcome msg!</span>
+            <div>
+                <a href="#">Sign In</a>
+                <a href="#">Create an Account</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header>
+        <a href="#" class="logo">LUMA<span>MAGENTO</span></a>
+        
+        <div class="search-bar">
+            <input type="text" placeholder="Search entire store here...">
+            <button>Search</button>
+        </div>
+
+        <a href="#" class="minicart">
+            Cart <span class="minicart-icon">2</span>
+        </a>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav>
+        <ul class="nav-links">
+            <li><a href="#">What's New</a></li>
+            <li><a href="#">Women</a></li>
+            <li><a href="#">Men</a></li>
+            <li><a href="#">Gear</a></li>
+            <li><a href="#">Training</a></li>
+            <li><a href="#">Sale</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Banner Promo -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>New Luma Yoga Collection</h1>
+            <p>Get fit in style with our latest high-performance activewear designed for maximum comfort.</p>
+            <button>Shop New Yoga</button>
+        </div>
+    </section>
+
+    <!-- Main Content / Products Grid -->
+    <main class="main-content">
+        <h2 class="section-title">Hot Sellers</h2>
+        
+        <div class="product-grid">
+            <!-- Product 1 -->
+            <div class="product-card">
+                <img class="product-image" src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Running Shoes">
+                <a href="#" class="product-name">Fusion Flex Running Shoes</a>
+                <div class="product-rating">★★★★☆ (4 Reviews)</div>
+                <div class="product-price">$59.00</div>
+                <button class="add-to-cart-btn">Add to Cart</button>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="product-card">
+                <img class="product-image" src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Smart Watch">
+                <a href="#" class="product-name">Luma Fitness Smart Watch</a>
+                <div class="product-rating">★★★★★ (12 Reviews)</div>
+                <div class="product-price">$120.00</div>
+                <button class="add-to-cart-btn">Add to Cart</button>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="product-card">
+                <img class="product-image" src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="T-Shirt">
+                <a href="#" class="product-name">Aero Daily Tee</a>
+                <div class="product-rating">★★★☆☆ (8 Reviews)</div>
+                <div class="product-price">$24.00</div>
+                <button class="add-to-cart-btn">Add to Cart</button>
+            </div>
+
+            <!-- Product 4 -->
+            <div class="product-card">
+                <img class="product-image" src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Water Bottle">
+                <a href="#" class="product-name">Hydrate Matte Water Bottle</a>
+                <div class="product-rating">★★★★★ (15 Reviews)</div>
+                <div class="product-price">$18.00</div>
+                <button class="add-to-cart-btn">Add to Cart</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <h4>About Us</h4>
+                <ul>
+                    <li><a href="#">Our Story</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Customer Service</h4>
+                <ul>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Shipping & Returns</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#">Advanced Search</a></li>
+                    <li><a href="#">Orders and Returns</a></li>
+                    <li><a href="#">Store Locator</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2023 Magento, Inc. All rights reserved. Demo Luma Theme.
+        </div>
+    </footer>
+
+</body>
+</html>
