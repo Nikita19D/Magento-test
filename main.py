@@ -16,6 +16,7 @@ template= Jinja2Templates(directory="templates")
 @app.get("/")
 def index(req:Request):
     return template.TemplateResponse(
+        request=req,
         name="index.html",
         context={"request":req}
     )
@@ -46,6 +47,7 @@ async def submit_form(req:Request,prompt:str=Form(...)):
             #input="Create a simple html magento sample"
         )
         return template.TemplateResponse(
+            request=req,
             name="index.html",
             context={"request": req, "output_hyva": interaction.output_text, "prompt": prompt}
         )
