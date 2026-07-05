@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Field &amp; Co. — Hyvä Storefront Demo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.5/cdn.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#1A1A1A',
+          mute: '#6B6B6E',
+          hair: '#E5E5E7',
+          surface: '#F7F7F8',
+          accent: '#EB5C2C',
+          accentDark: '#C8481E',
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          body: ['Inter', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        },
+      },
+    },
+  }
+</script>
+<style>[x-cloak]{display:none!important} ::selection{background:#EB5C2C;color:#fff}</style>
+</head>
+
+<!--
+  HYVÄ NOTES FOR THE MIGRATION TEAM
+  ----------------------------------
+  This is a static front-end demo of what a Hyvä-based Magento homepage looks like.
+  In a real Hyvä theme these pieces map onto:
+
+  - x-data="initMiniCart()"      ->  app/design/frontend/<Vendor>/<theme>/Magento_Checkout/templates/cart/minicart.phtml
+                                      backed by hyva-themes/magento2-hyva-checkout's cart GraphQL data + Alpine store
+  - x-data="initCategoryGrid()"  ->  Magento_Catalog templates rendering product collections server-side
+                                      (Hyvä avoids client-side fetching for SEO-critical content — this demo
+                                      fakes it in Alpine purely for the interactive preview)
+  - Alpine "$store.cart"         ->  Hyvä ships a small global cart store (hyva-checkout / hyva-modules)
+                                      instead of Magento's old private-content/localStorage cart refresh
+  - No jQuery / knockout / RequireJS anywhere — this is the core Hyvä pitch: Tailwind + Alpine only,
+    which is why page weight and Lighthouse scores improve so much over Luma.
+-->
+
+<body class="bg-white text-ink font-body antialiased" x-data="store()">
+
+  <!-- ============ TOP UTILITY BAR ============ -->
+  <div class="hidden sm:block bg-ink text-white text-xs">
+    <div class="max-w-7xl mx-auto px-6 py-2 flex justify-between font-mono tracking-wide">
+      <span>FREE UK SHIPPING OVER £75</span>
+      <span>HYVÄ DEMO STOREFRONT — NOT A REAL CHECKOUT</span>
+    </div>
+  </div>
+
+  <!-- ============ HEADER (Magento_Theme::html/header.phtml equivalent) ============ -->
+  <header class="border-b border-hair sticky top-0 bg-white/95 backdrop-blur z-40">
+    <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between gap-6">
+      <a href="#" class="font-display text-xl font-700 tracking-tight shrink-0">FIELD&nbsp;&amp;&nbsp;CO.</a>
+
+      <nav class="hidden md:flex gap-8 text-sm font-medium text-mute">
+        <a href="#" class="hover:text-ink transition-colors">Outerwear</a>
+        <a href="#" class="hover:text-ink transition-colors">Footwear</a>
+        <a href="#" class="hover:text-ink transition-colors">Accessories</a>
+        <a href="#" class="hover:text-ink transition-colors">Journal</a>
+      </nav>
+
+      <!-- search (Hyvä ships this as an Alpine dropdown, no full page reload) -->
+      <div class="hidden lg:flex flex-1 max-w-sm" x-data="{ open: false }">
+        <div class="relative w-full">
+          <input type="search" placeholder="Search products…"
+                 class="w-full h-10 pl-9 pr-3 rounded-sm border border-hair text-sm focus:outline-none focus:border-ink transition-colors">
+          <svg class="w-4 h-4 absolute left-3 top-3 text-mute" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-5 text-mute shrink-0">
+        <button aria-label="Account" class="hover:text-ink transition-colors hidden sm:inline-flex">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        </button>
+
+        <!-- ===== MINI CART TRIGGER (Alpine store) ===== -->
+        <button @click="cart.open = true" aria-label="Cart" class="relative hover:text-ink transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          <span x-show="cart.items.length" x-text="cart.items.length" x-cloak
+                class="absolute -top-2 -right-2 w-4 h-4 bg-accent text-white text-[10px] rounded-full flex items-center justify-center"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ MINI CART DRAWER (Magento_Checkout::cart/minicart.phtml equivalent) ============ -->
+  <div x-show="cart.open" x-cloak class="fixed inset-0 z-50" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 bg-ink/40" x-show="cart.open" x-transition:enter="transition-opacity duration-200" x-transition:leave="transition-opacity duration-150" @click="cart.open = false"></div>
+    <div class="absolute right-0 top-0 h-full w-full max-w-sm bg-white shadow-xl flex flex-col"
+         x-show="cart.open"
+         x-transition:enter="transition transform duration-250 ease-out" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+         x-transition:leave="transition transform duration-200 ease-in" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full">
+      <div class="flex items-center justify-between px-6 py-5 border-b border-hair">
+        <h2 class="font-display font-600">Your cart <span class="text-mute font-normal" x-text="'(' + cart.items.length + ')'"></span></h2>
+        <button @click="cart.open = false" aria-label="Close cart" class="text-mute hover:text-ink">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+        <template x-if="!cart.items.length">
+          <p class="text-sm text-mute py-10 text-center">Your cart is empty. Add something from the collection below.</p>
+        </template>
+        <template x-for="(item, i) in cart.items" :key="i">
+          <div class="flex gap-3">
+            <img :src="item.image" class="w-16 h-16 object-cover rounded-sm bg-surface">
+            <div class="flex-1">
+              <p class="text-sm font-medium" x-text="item.name"></p>
+              <p class="text-xs text-mute" x-text="item.price"></p>
+            </div>
+            <button @click="cart.items.splice(i,1)" class="text-mute hover:text-accent text-xs self-start">Remove</button>
+          </div>
+        </template>
+      </div>
+
+      <div class="border-t border-hair px-6 py-5">
+        <div class="flex justify-between text-sm mb-4">
+          <span class="text-mute">Subtotal</span>
+          <span class="font-medium" x-text="cart.subtotal()"></span>
+        </div>
+        <button class="w-full h-11 bg-ink text-white rounded-sm font-medium hover:bg-accentDark transition-colors">Go to checkout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ HERO (Magento CMS block equivalent) ============ -->
+  <section class="max-w-7xl mx-auto px-6 pt-14 pb-16 grid md:grid-cols-2 gap-10 items-center">
+    <div>
+      <p class="font-mono text-xs text-accent tracking-widest uppercase mb-4">New — Autumn/Winter drop</p>
+      <h1 class="font-display text-4xl md:text-5xl font-700 tracking-tight leading-[1.05] mb-6">
+        Built for the trail.<br>Styled for the street.
+      </h1>
+      <p class="text-mute leading-relaxed max-w-md mb-8">
+        Waxed cotton, wool, and full-grain leather — gear that's meant to be worn hard and to age well doing it.
+      </p>
+      <a href="#collection" class="inline-flex h-12 px-8 items-center bg-ink text-white rounded-sm font-medium hover:bg-accentDark transition-colors">Shop the collection</a>
+    </div>
+    <div class="aspect-[4/3] bg-surface rounded-sm overflow-hidden">
+      <img src="https://images.unsplash.com/photo-1544923246-77307dd654cb?w=1200&q=80" class="w-full h-full object-cover" alt="Autumn/Winter collection">
+    </div>
+  </section>
+
+  <!-- ============ CATEGORY TILES (Magento_Catalog category list widget equivalent) ============ -->
+  <section class="max-w-7xl mx-auto px-6 pb-16">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <a href="#" class="group relative aspect-square rounded-sm overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&q=80" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+        <span class="absolute inset-0 bg-ink/30 flex items-end p-4"><span class="text-white font-display font-600">Outerwear</span></span>
+      </a>
+      <a href="#" class="group relative aspect-square rounded-sm overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+        <span class="absolute inset-0 bg-ink/30 flex items-end p-4"><span class="text-white font-display font-600">Footwear</span></span>
+      </a>
+      <a href="#" class="group relative aspect-square rounded-sm overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+        <span class="absolute inset-0 bg-ink/30 flex items-end p-4"><span class="text-white font-display font-600">Bags</span></span>
+      </a>
+      <a href="#" class="group relative aspect-square rounded-sm overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1520975954732-35dd22299614?w=500&q=80" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+        <span class="absolute inset-0 bg-ink/30 flex items-end p-4"><span class="text-white font-display font-600">Denim</span></span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ FEATURED PRODUCTS GRID (Magento_Catalog product list widget equivalent) ============ -->
+  <section id="collection" class="max-w-7xl mx-auto px-6 pb-16">
+    <div class="flex items-end justify-between mb-8">
+      <h2 class="font-display text-2xl font-700">Best sellers</h2>
+      <a href="#" class="text-sm text-mute hover:text-ink underline underline-offset-2">View all</a>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <template x-for="product in products" :key="product.name">
+        <div class="group">
+          <div class="aspect-square bg-surface rounded-sm overflow-hidden mb-3 relative">
+            <img :src="product.image" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+            <button @click="addToCart(product)"
+                    class="absolute bottom-3 right-3 w-9 h-9 rounded-full bg-white shadow flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-ink hover:text-white"
+                    aria-label="Quick add to cart">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+            </button>
+          </div>
+          <p class="text-sm font-medium" x-text="product.name"></p>
+          <p class="text-sm text-mute" x-text="product.price"></p>
+        </div>
+      </template>
+    </div>
+  </section>
+
+  <!-- ============ USP STRIP ============ -->
+  <section class="border-y border-hair bg-surface">
+    <div class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+      <div>
+        <p class="font-display font-600 mb-1">Free UK delivery</p>
+        <p class="text-sm text-mute">On all orders over £75</p>
+      </div>
+      <div>
+        <p class="font-display font-600 mb-1">30-day returns</p>
+        <p class="text-sm text-mute">No questions asked</p>
+      </div>
+      <div>
+        <p class="font-display font-600 mb-1">Made to last</p>
+        <p class="text-sm text-mute">Repairable, not disposable</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NEWSLETTER (Magento_Newsletter block equivalent) ============ -->
+  <section class="max-w-7xl mx-auto px-6 py-16 text-center">
+    <h2 class="font-display text-2xl font-700 mb-3">Stay in the loop</h2>
+    <p class="text-mute mb-6 max-w-md mx-auto">New drops, restocks, and the occasional field note. No spam.</p>
+    <form class="flex max-w-sm mx-auto gap-2" @submit.prevent>
+      <input type="email" placeholder="you@example.com" class="flex-1 h-11 px-4 border border-hair rounded-sm text-sm focus:outline-none focus:border-ink">
+      <button class="h-11 px-6 bg-ink text-white rounded-sm text-sm font-medium hover:bg-accentDark transition-colors">Subscribe</button>
+    </form>
+  </section>
+
+  <!-- ============ FOOTER (Magento_Theme::html/footer.phtml equivalent) ============ -->
+  <footer class="border-t border-hair">
+    <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-2 md:grid-cols-5 gap-8 text-sm">
+      <div class="col-span-2">
+        <p class="font-display font-700 mb-3">FIELD &amp; CO.</p>
+        <p class="text-mute max-w-xs">Small-batch outdoor goods, made to be used and repaired, not replaced.</p>
+      </div>
+      <div>
+        <p class="font-medium mb-3">Shop</p>
+        <ul class="space-y-2 text-mute">
+          <li><a href="#" class="hover:text-ink">Outerwear</a></li>
+          <li><a href="#" class="hover:text-ink">Footwear</a></li>
+          <li><a href="#" class="hover:text-ink">Accessories</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="font-medium mb-3">Support</p>
+        <ul class="space-y-2 text-mute">
+          <li><a href="#" class="hover:text-ink">Shipping</a></li>
+          <li><a href="#" class="hover:text-ink">Returns</a></li>
+          <li><a href="#" class="hover:text-ink">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="font-medium mb-3">Company</p>
+        <ul class="space-y-2 text-mute">
+          <li><a href="#" class="hover:text-ink">About</a></li>
+          <li><a href="#" class="hover:text-ink">Journal</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto px-6 py-6 border-t border-hair text-xs text-mute font-mono flex justify-between">
+      <span>© 2026 FIELD &amp; CO.</span>
+      <span>Built with Tailwind CSS + Alpine.js — Hyvä theme pattern</span>
+    </div>
+  </footer>
+
+  <script>
+    function store() {
+      return {
+        products: [
+          { name: 'Field Anorak', price: '£128.00', image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&q=80' },
+          { name: 'Wool Beanie', price: '£28.00', image: 'https://images.unsplash.com/photo-1544441893-675973e31985?w=500&q=80' },
+          { name: 'Trail Sneaker', price: '£95.00', image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80' },
+          { name: 'Canvas Tote', price: '£38.00', image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80' },
+        ],
+        cart: {
+          open: false,
+          items: [],
+          subtotal() {
+            const total = this.items.reduce((sum, i) => sum + parseFloat(i.price.replace('£', '')), 0);
+            return '£' + total.toFixed(2);
+          }
+        },
+        addToCart(product) {
+          this.cart.items.push(product);
+          this.cart.open = true;
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>
