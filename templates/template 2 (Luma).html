@@ -3,246 +3,660 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Field Anorak — Product Page (Tailwind rebuild)</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          ink: '#1A1A1A',
-          mute: '#6B6B6E',
-          hair: '#E5E5E7',
-          surface: '#F7F7F8',
-          accent: '#EB5C2C',
-          accentDark: '#C8481E',
-        },
-        fontFamily: {
-          display: ['"Space Grotesk"', 'sans-serif'],
-          body: ['Inter', 'sans-serif'],
-          mono: ['"JetBrains Mono"', 'monospace'],
-        },
-      },
-    },
-  }
-</script>
+<title>Field Anorak - Magento Luma Style Product Page</title>
 <style>
-  /* Old Magento (Luma) reference, kept only as a comment map for the team doing the migration:
-     .product-info-main        -> flex column, Tailwind: flex flex-col
-     .product.media            -> gallery wrapper, Tailwind: grid + sticky
-     .price-box .price         -> font-size/weight overrides, Tailwind: text-3xl font-semibold
-     .swatch-attribute-options -> inline-block swatches, Tailwind: flex flex-wrap gap-2
-     .box-tocart               -> qty + button row, Tailwind: flex items-center gap-3
-     .product.data.items       -> tab nav, Tailwind: flex border-b
-     .additional-attributes    -> table, Tailwind: divide-y with flex rows
-  */
-  ::selection { background: #EB5C2C; color: #fff; }
+  :root {
+    --luma-text: #333;
+    --luma-muted: #777;
+    --luma-border: #e8e8e8;
+    --luma-panel: #222;
+    --luma-bg: #fff;
+    --luma-accent: #f47c20;
+    --luma-link: #1979c3;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--luma-text);
+    background: var(--luma-bg);
+    line-height: 1.5;
+  }
+
+  a { color: var(--luma-link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .page-wrapper { min-height: 100vh; }
+  .panel.wrapper {
+    background: var(--luma-panel);
+    color: #fff;
+    font-size: 12px;
+  }
+  .panel.header,
+  .header.content,
+  .breadcrumbs,
+  .columns,
+  .footer.content {
+    width: 92%;
+    max-width: 1240px;
+    margin: 0 auto;
+  }
+  .panel.header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 8px 0;
+  }
+
+  .header.content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--luma-border);
+  }
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: .04em;
+    color: #222;
+  }
+  .navigation ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+  }
+
+  .minicart-wrapper {
+    font-size: 14px;
+    position: relative;
+  }
+  .counter.qty {
+    display: inline-block;
+    min-width: 18px;
+    height: 18px;
+    line-height: 18px;
+    text-align: center;
+    border-radius: 10px;
+    background: var(--luma-accent);
+    color: #fff;
+    font-size: 11px;
+    margin-left: 5px;
+  }
+
+  .breadcrumbs {
+    font-size: 12px;
+    color: var(--luma-muted);
+    padding: 16px 0;
+  }
+  .breadcrumbs .items {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .columns {
+    display: flex;
+    gap: 48px;
+    padding-bottom: 36px;
+  }
+  .product.media {
+    flex: 1 1 55%;
+  }
+  .product-info-main {
+    flex: 1 1 45%;
+    min-width: 340px;
+  }
+
+  .gallery-placeholder {
+    border: 1px solid var(--luma-border);
+    margin-bottom: 12px;
+    background: #fafafa;
+  }
+  .gallery-placeholder img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 680px;
+    object-fit: cover;
+  }
+  .fotorama__nav-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .fotorama__nav-wrap button {
+    width: 86px;
+    height: 86px;
+    border: 1px solid var(--luma-border);
+    background: #fff;
+    padding: 0;
+    cursor: pointer;
+  }
+  .fotorama__nav-wrap button.selected {
+    border-color: #111;
+    box-shadow: 0 0 0 1px #111 inset;
+  }
+  .fotorama__nav-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .product-info-main .page-title {
+    margin: 0 0 8px;
+    font-size: 34px;
+    line-height: 1.2;
+    font-weight: 600;
+  }
+  .sku {
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--luma-muted);
+  }
+  .rating-summary {
+    margin-bottom: 14px;
+    color: #d18800;
+  }
+
+  .price-box {
+    margin: 14px 0;
+  }
+  .price-container {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .price-final_price .price {
+    font-size: 36px;
+    font-weight: 600;
+    color: #111;
+  }
+  .old-price .price {
+    color: #888;
+    text-decoration: line-through;
+  }
+
+  .product.attribute.overview {
+    color: #444;
+    margin: 16px 0 24px;
+  }
+
+  .swatch-attribute {
+    margin-bottom: 16px;
+  }
+  .swatch-attribute-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .swatch-attribute-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .swatch-option {
+    border: 1px solid #bfbfbf;
+    background: #fff;
+    cursor: pointer;
+    min-width: 38px;
+    min-height: 38px;
+    font-size: 13px;
+    transition: border-color .15s ease, background-color .15s ease, color .15s ease;
+  }
+  .swatch-option.color {
+    border-radius: 50%;
+    min-width: 32px;
+    min-height: 32px;
+  }
+  .swatch-option.text {
+    padding: 0 10px;
+    line-height: 36px;
+  }
+  .swatch-option.text.selected {
+    background: #111;
+    border-color: #111;
+    color: #fff;
+  }
+  .swatch-option.color.selected {
+    border-color: #111;
+    box-shadow: 0 0 0 2px #fff inset, 0 0 0 1px #111;
+  }
+  .swatch-option.selected {
+    outline: 2px solid #111;
+    outline-offset: 1px;
+  }
+
+  .box-tocart {
+    margin-top: 22px;
+  }
+  .fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+  }
+  .field.qty {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 10px;
+  }
+  .control.qty {
+    display: inline-flex;
+    border: 1px solid var(--luma-border);
+  }
+  .control.qty button,
+  .control.qty input {
+    width: 40px;
+    height: 40px;
+    border: 0;
+    text-align: center;
+    background: #fff;
+  }
+  .control.qty button { cursor: pointer; font-size: 20px; color: #666; }
+  .control.qty input { border-left: 1px solid var(--luma-border); border-right: 1px solid var(--luma-border); }
+
+  .action.tocart.primary {
+    display: inline-block;
+    border: 0;
+    background: var(--luma-accent);
+    color: #fff;
+    height: 42px;
+    padding: 0 24px;
+    text-transform: uppercase;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    cursor: pointer;
+  }
+
+  .stock.available { color: #2e7d32; margin-top: 12px; font-size: 13px; }
+
+  .product.data.items {
+    border-top: 1px solid var(--luma-border);
+    margin-top: 34px;
+  }
+  .product.data.items .items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--luma-border);
+  }
+  .product.data.items .item.title {
+    border-right: 1px solid var(--luma-border);
+  }
+  .product.data.items .item.title a {
+    display: block;
+    padding: 12px 18px;
+    color: #444;
+    font-size: 14px;
+  }
+  .product.data.items .item.title.active a {
+    color: #111;
+    font-weight: 700;
+    border-bottom: 2px solid #111;
+  }
+  .product.data.items .item.content {
+    display: none;
+    padding: 18px 0;
+    color: #444;
+  }
+  .product.data.items .item.content.active {
+    display: block;
+  }
+
+  .additional-attributes-wrapper {
+    margin-top: 12px;
+    max-width: 560px;
+  }
+  .additional-attributes {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .additional-attributes th,
+  .additional-attributes td {
+    text-align: left;
+    border-bottom: 1px solid var(--luma-border);
+    padding: 8px 0;
+  }
+  .additional-attributes th { color: #666; width: 40%; font-weight: normal; }
+
+  .messages {
+    margin-top: 14px;
+    min-height: 22px;
+    font-size: 13px;
+  }
+  .message-success { color: #2e7d32; }
+
+  .footer.content {
+    border-top: 1px solid var(--luma-border);
+    margin-top: 38px;
+    padding: 24px 0;
+    font-size: 12px;
+    color: #777;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  @media (max-width: 980px) {
+    .columns { flex-direction: column; gap: 24px; }
+    .product-info-main { min-width: auto; }
+    .navigation ul { gap: 12px; }
+  }
+
+  @media (max-width: 640px) {
+    .navigation { display: none; }
+    .product-info-main .page-title { font-size: 30px; }
+    .footer.content { flex-direction: column; gap: 8px; }
+    .field.qty { display: flex; margin-right: 0; margin-bottom: 10px; }
+    .actions { display: block; }
+    .action.tocart.primary { width: 100%; }
+  }
 </style>
 </head>
-<body class="bg-white text-ink font-body antialiased">
-
-  <!-- ============ TOP UTILITY BAR ============ -->
-  <div class="hidden sm:block bg-ink text-white text-xs">
-    <div class="max-w-7xl mx-auto px-6 py-2 flex justify-between font-mono tracking-wide">
-      <span>FREE UK SHIPPING OVER £75</span>
-      <span>ORDERS DISPATCH WITHIN 24H</span>
+<body class="catalog-product-view page-product-configurable">
+  <div class="page-wrapper" id="product-page">
+    <div class="panel wrapper">
+      <div class="panel header">
+        <span>FREE UK SHIPPING OVER GBP 75</span>
+        <span>LUMA TECHNOLOGY DEMO (STATIC)</span>
+      </div>
     </div>
+
+    <header class="page-header">
+      <div class="header content">
+        <a href="#" class="logo">FIELD &amp; CO.</a>
+        <nav class="navigation">
+          <ul>
+            <li><a href="#">Outerwear</a></li>
+            <li><a href="#">Footwear</a></li>
+            <li><a href="#">Accessories</a></li>
+            <li><a href="#">Journal</a></li>
+          </ul>
+        </nav>
+        <div class="minicart-wrapper">
+          Cart
+          <span class="counter qty" data-bind="text: cartQty">0</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="breadcrumbs">
+      <ul class="items">
+        <li class="item home"><a href="#">Home</a></li>
+        <li>/</li>
+        <li class="item category"><a href="#">Outerwear</a></li>
+        <li>/</li>
+        <li class="item product">Field Anorak</li>
+      </ul>
+    </div>
+
+    <main class="page-main" role="main">
+      <div class="columns">
+        <div class="column main">
+          <div class="product media" data-gallery-role="gallery-placeholder">
+            <div class="gallery-placeholder" data-role="gallery-placeholder">
+              <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=1200&q=80" alt="Field Anorak" data-bind="attr: { src: activeImage }">
+            </div>
+            <div class="fotorama__nav-wrap" data-gallery-role="gallery-nav" data-bind="foreach: gallery">
+              <button type="button" data-bind="click: $parent.setImage">
+                <img data-bind="attr: { src: thumb, alt: label }" alt="Product thumbnail">
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="column main product-info-main">
+          <div class="sku">SKU: FA-2201-OLV</div>
+          <h1 class="page-title">Field Anorak</h1>
+
+          <div class="reviews-actions rating-summary">
+            <span>★★★★★</span>
+            <a href="#reviews">42 Reviews</a>
+          </div>
+
+          <div class="price-box price-final_price" data-role="priceBox" data-product-id="FA-2201-OLV">
+            <div class="price-container">
+              <span class="price-wrapper price-final_price">
+                <span class="price">GBP 128.00</span>
+              </span>
+              <span class="old-price">
+                <span class="price">GBP 160.00</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="product attribute overview">
+            A waxed-cotton anorak built for wet trailheads and long waits at bus stops. Storm flap, single chest pocket, drawcord hem.
+          </div>
+
+          <div class="swatch-attribute color" data-attribute-code="color" data-role="swatch-attribute">
+            <strong class="swatch-attribute-label">Color:</strong>
+            <span id="selectedColorValue">Olive</span>
+            <div class="swatch-attribute-options" id="colorOptions" data-role="swatch-options">
+              <button type="button" class="swatch-option color selected" style="background-color:#5C6B4A" data-color="Olive" data-option-label="Olive" data-option-id="c1" title="Olive" aria-label="Color Olive" aria-pressed="true"></button>
+              <button type="button" class="swatch-option color" style="background-color:#2B2B2E" data-color="Black" data-option-label="Black" data-option-id="c2" title="Black" aria-label="Color Black" aria-pressed="false"></button>
+              <button type="button" class="swatch-option color" style="background-color:#8A7458" data-color="Tan" data-option-label="Tan" data-option-id="c3" title="Tan" aria-label="Color Tan" aria-pressed="false"></button>
+            </div>
+          </div>
+
+          <div class="swatch-attribute size" data-attribute-code="size" data-role="swatch-attribute">
+            <strong class="swatch-attribute-label">Size:</strong>
+            <span id="selectedSizeValue">M</span>
+            <div class="swatch-attribute-options" id="sizeOptions" data-role="swatch-options">
+              <button type="button" class="swatch-option text" data-size="XS" data-option-label="XS" data-option-id="s1" title="Size XS" aria-label="Size XS" aria-pressed="false">XS</button>
+              <button type="button" class="swatch-option text" data-size="S" data-option-label="S" data-option-id="s2" title="Size S" aria-label="Size S" aria-pressed="false">S</button>
+              <button type="button" class="swatch-option text selected" data-size="M" data-option-label="M" data-option-id="s3" title="Size M" aria-label="Size M" aria-pressed="true">M</button>
+              <button type="button" class="swatch-option text" data-size="L" data-option-label="L" data-option-id="s4" title="Size L" aria-label="Size L" aria-pressed="false">L</button>
+            </div>
+          </div>
+
+          <form class="product-add-form" id="product_addtocart_form" action="#" method="post" data-role="tocart-form">
+            <input type="hidden" name="product" value="FA-2201-OLV">
+            <input type="hidden" name="selected_configurable_option" value="">
+            <input type="hidden" name="form_key" value="demo_form_key">
+
+            <div class="box-tocart">
+              <fieldset class="fieldset">
+              <div class="field qty">
+                <label class="label" for="qty"><span>Qty</span></label>
+                <div class="control qty">
+                  <button type="button" data-bind="click: decreaseQty">-</button>
+                  <input id="qty" name="qty" type="number" min="1" step="1" inputmode="numeric" data-bind="value: qty">
+                  <button type="button" data-bind="click: increaseQty">+</button>
+                </div>
+              </div>
+
+              <div class="actions">
+                <button type="button" class="action tocart primary" data-bind="click: addToCart">
+                  <span>Add to Cart</span>
+                </button>
+              </div>
+              </fieldset>
+              <div class="stock available">In stock</div>
+              <div class="messages" data-bind="css: { 'message-success': flashMessage().length > 0 }, text: flashMessage"></div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="product data items" data-role="tabs" data-mage-init='{"tabs":{"openedState":"active"}}'>
+        <ul class="items">
+          <li class="item title active" data-tab="description"><a href="#" role="tab">Description</a></li>
+          <li class="item title" data-tab="additional"><a href="#" role="tab">Additional Information</a></li>
+          <li class="item title" data-tab="reviews" id="reviews"><a href="#" role="tab">Reviews (42)</a></li>
+        </ul>
+
+        <div class="item content active" data-content="description">
+          <p>Cut from 6oz waxed cotton canvas with a brushed-flannel lining through the body, the Field Anorak trades zips for a storm-flap placket that keeps rain out without a single moving part to fail.</p>
+        </div>
+
+        <div class="item content" data-content="additional">
+          <div class="additional-attributes-wrapper table-wrapper">
+            <table class="data table additional-attributes" id="product-attribute-specs-table">
+              <tbody>
+                <tr><th>Material</th><td>6oz waxed cotton</td></tr>
+                <tr><th>Lining</th><td>Brushed flannel</td></tr>
+                <tr><th>Fit</th><td>Regular</td></tr>
+                <tr><th>Care</th><td>Wipe clean, re-wax yearly</td></tr>
+                <tr><th>Made in</th><td>Portugal</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="item content" data-content="reviews">
+          <p>Average rating: 5.0 based on 42 reviews.</p>
+        </div>
+      </div>
+    </main>
+
+    <footer class="page-footer">
+      <div class="footer content">
+        <span>Copyright 2026 FIELD &amp; CO.</span>
+        <span>Built with RequireJS + jQuery + Knockout style bindings (Luma pattern)</span>
+      </div>
+    </footer>
   </div>
 
-  <!-- ============ HEADER ============ -->
-  <header class="border-b border-hair">
-    <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-      <a href="#" class="font-display text-xl font-700 tracking-tight">FIELD&nbsp;&amp;&nbsp;CO.</a>
-      <nav class="hidden md:flex gap-8 text-sm font-medium text-mute">
-        <a href="#" class="hover:text-ink transition-colors">Outerwear</a>
-        <a href="#" class="hover:text-ink transition-colors">Footwear</a>
-        <a href="#" class="hover:text-ink transition-colors">Accessories</a>
-        <a href="#" class="hover:text-ink transition-colors">Journal</a>
-      </nav>
-      <div class="flex items-center gap-5 text-mute">
-        <button aria-label="Search" class="hover:text-ink transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.35-5.65a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        </button>
-        <button aria-label="Cart" class="relative hover:text-ink transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-          <span class="absolute -top-2 -right-2 w-4 h-4 bg-accent text-white text-[10px] rounded-full flex items-center justify-center">2</span>
-        </button>
-      </div>
-    </div>
-  </header>
+  <script type="text/x-magento-init">
+    {
+      "*": {
+        "Magento_Catalog/js/catalog-add-to-cart": {},
+        "Magento_Catalog/js/validate-product": {},
+        "Magento_Swatches/js/swatch-renderer": {},
+        "mage/tabs": {},
+        "Magento_Catalog/js/price-box": {}
+      }
+    }
+  </script>
 
-  <!-- ============ BREADCRUMBS (was: .breadcrumbs) ============ -->
-  <div class="max-w-7xl mx-auto px-6 pt-6 text-xs font-mono text-mute tracking-wide">
-    <a href="#" class="hover:text-ink">Home</a>
-    <span class="mx-2">/</span>
-    <a href="#" class="hover:text-ink">Outerwear</a>
-    <span class="mx-2">/</span>
-    <span class="text-ink">Field Anorak</span>
-  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+  <script>
+    if (typeof window.require !== 'function') {
+      console.error('RequireJS failed to load. Interactive Luma demo features are disabled.');
+    } else {
+      require.config({
+        paths: {
+          jquery: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min',
+          knockout: 'https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-min'
+        }
+      });
 
-  <!-- ============ MAIN PRODUCT SECTION (was: .catalog-product-view / .product-info-main) ============ -->
-  <main class="max-w-7xl mx-auto px-6 py-10">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      require(['jquery', 'knockout'], function ($, ko) {
+      function ProductViewModel() {
+        var self = this;
 
-      <!-- ---- GALLERY (was: .product.media / .fotorama) ---- -->
-      <div class="lg:sticky lg:top-6 self-start">
-        <div class="aspect-[4/5] bg-surface rounded-sm overflow-hidden mb-4">
-          <img id="mainImage" src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=1000&q=80" alt="Field Anorak, front view" class="w-full h-full object-cover">
-        </div>
-        <div class="grid grid-cols-4 gap-3">
-          <button onclick="document.getElementById('mainImage').src=this.querySelector('img').src" class="aspect-square bg-surface rounded-sm overflow-hidden ring-1 ring-accent ring-offset-2">
-            <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=300&q=80" alt="" class="w-full h-full object-cover">
-          </button>
-          <button onclick="document.getElementById('mainImage').src=this.querySelector('img').src" class="aspect-square bg-surface rounded-sm overflow-hidden ring-1 ring-transparent hover:ring-hair">
-            <img src="https://images.unsplash.com/photo-1544923246-77307dd654cb?w=300&q=80" alt="" class="w-full h-full object-cover">
-          </button>
-          <button onclick="document.getElementById('mainImage').src=this.querySelector('img').src" class="aspect-square bg-surface rounded-sm overflow-hidden ring-1 ring-transparent hover:ring-hair">
-            <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=300&q=80" alt="" class="w-full h-full object-cover">
-          </button>
-          <button onclick="document.getElementById('mainImage').src=this.querySelector('img').src" class="aspect-square bg-surface rounded-sm overflow-hidden ring-1 ring-transparent hover:ring-hair">
-            <img src="https://images.unsplash.com/photo-1516826957135-700dedea698c?w=300&q=80" alt="" class="w-full h-full object-cover">
-          </button>
-        </div>
-      </div>
+        self.cartQty = ko.observable(0);
+        self.qty = ko.observable(1);
+        self.selectedColor = 'Olive';
+        self.selectedSize = 'M';
+        self.flashMessage = ko.observable('');
 
-      <!-- ---- INFO MAIN (was: .product-info-main) ---- -->
-      <div class="flex flex-col">
-        <p class="font-mono text-xs text-mute tracking-widest uppercase mb-2">SKU FA-2201-OLV</p>
-        <h1 class="font-display text-3xl md:text-4xl font-700 tracking-tight mb-3">Field Anorak</h1>
+        self.gallery = [
+          { label: 'Front view', thumb: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=200&q=80', full: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=1200&q=80' },
+          { label: 'Back view', thumb: 'https://images.unsplash.com/photo-1544923246-77307dd654cb?w=200&q=80', full: 'https://images.unsplash.com/photo-1544923246-77307dd654cb?w=1200&q=80' },
+          { label: 'Detail view', thumb: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=200&q=80', full: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=1200&q=80' }
+        ];
 
-        <!-- reviews summary (was: .reviews-actions / .rating-summary) -->
-        <div class="flex items-center gap-2 mb-5 text-sm">
-          <div class="flex text-accent">
-            ★★★★★
-          </div>
-          <a href="#reviews" class="text-mute hover:text-ink underline underline-offset-2">42 reviews</a>
-        </div>
+        self.activeImage = ko.observable(self.gallery[0].full);
 
-        <!-- price box (was: .price-box .price-final_price) -->
-        <div class="flex items-baseline gap-3 mb-6">
-          <span class="font-display text-3xl font-600">£128.00</span>
-          <span class="text-mute line-through text-lg">£160.00</span>
-          <span class="text-xs font-mono bg-accent/10 text-accentDark px-2 py-1 rounded-sm">SAVE 20%</span>
-        </div>
+        self.normalizeQty = function (value) {
+          var parsed = parseInt(value, 10);
+          return isNaN(parsed) || parsed < 1 ? 1 : parsed;
+        };
 
-        <p class="text-mute leading-relaxed mb-8 max-w-md">
-          A waxed-cotton anorak built for wet trailheads and long waits at bus stops. Storm flap, single chest pocket, drawcord hem.
-        </p>
+        self.setImage = function (item) {
+          if (!item || !item.full) {
+            return;
+          }
+          self.activeImage(item.full);
+        };
 
-        <!-- swatches (was: .swatch-attribute-options) -->
-        <div class="mb-6">
-          <p class="text-sm font-medium mb-2">Colour — <span class="text-mute font-normal">Olive</span></p>
-          <div class="flex gap-2">
-            <button class="w-9 h-9 rounded-full bg-[#5C6B4A] ring-2 ring-offset-2 ring-ink"></button>
-            <button class="w-9 h-9 rounded-full bg-[#2B2B2E] ring-2 ring-offset-2 ring-transparent hover:ring-hair"></button>
-            <button class="w-9 h-9 rounded-full bg-[#8A7458] ring-2 ring-offset-2 ring-transparent hover:ring-hair"></button>
-          </div>
-        </div>
+        self.increaseQty = function () {
+          var next = self.normalizeQty(self.qty()) + 1;
+          self.qty(next);
+        };
 
-        <div class="mb-8">
-          <div class="flex items-center justify-between mb-2">
-            <p class="text-sm font-medium">Size</p>
-            <a href="#" class="text-sm text-mute underline underline-offset-2 hover:text-ink">Size guide</a>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <button class="w-11 h-11 border border-hair rounded-sm text-sm hover:border-ink transition-colors">XS</button>
-            <button class="w-11 h-11 border-2 border-ink rounded-sm text-sm font-medium">S</button>
-            <button class="w-11 h-11 border border-hair rounded-sm text-sm hover:border-ink transition-colors">M</button>
-            <button class="w-11 h-11 border border-hair rounded-sm text-sm hover:border-ink transition-colors">L</button>
-            <button class="w-11 h-11 border border-hair rounded-sm text-sm text-mute/40 cursor-not-allowed" disabled>XL</button>
-          </div>
-        </div>
+        self.decreaseQty = function () {
+          var next = self.normalizeQty(self.qty()) - 1;
+          self.qty(next < 1 ? 1 : next);
+        };
 
-        <!-- box-to-cart (was: .box-tocart) -->
-        <div class="flex items-center gap-3 mb-4">
-          <div class="flex items-center border border-hair rounded-sm">
-            <button class="w-10 h-11 flex items-center justify-center text-mute hover:text-ink">−</button>
-            <input type="text" value="1" class="w-10 h-11 text-center border-x border-hair focus:outline-none">
-            <button class="w-10 h-11 flex items-center justify-center text-mute hover:text-ink">+</button>
-          </div>
-          <button class="flex-1 h-11 bg-ink text-white rounded-sm font-medium hover:bg-accentDark transition-colors">
-            Add to cart
-          </button>
-          <button aria-label="Add to wishlist" class="w-11 h-11 flex items-center justify-center border border-hair rounded-sm hover:border-ink transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-          </button>
-        </div>
-        <p class="text-xs text-mute font-mono">✓ In stock — ships in 1–2 business days</p>
-      </div>
-    </div>
+        self.addToCart = function () {
+          var normalizedQty = self.normalizeQty(self.qty());
+          self.qty(normalizedQty);
+          self.cartQty(self.cartQty() + normalizedQty);
+          self.flashMessage('Added ' + normalizedQty + ' item(s): Field Anorak / ' + self.selectedColor + ' / ' + self.selectedSize);
+        };
 
-    <!-- ============ TABS (was: .product.data.items) ============ -->
-    <div class="mt-16 border-t border-hair pt-10">
-      <div class="flex gap-8 border-b border-hair mb-8 text-sm font-medium">
-        <button class="pb-4 border-b-2 border-ink">Description</button>
-        <button class="pb-4 text-mute hover:text-ink">Additional information</button>
-        <button id="reviews" class="pb-4 text-mute hover:text-ink">Reviews (42)</button>
-      </div>
+        self.qty.subscribe(function (newValue) {
+          if (String(newValue) !== String(self.normalizeQty(newValue))) {
+            self.qty(self.normalizeQty(newValue));
+          }
+        });
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-        <div class="md:col-span-2 text-mute leading-relaxed space-y-4">
-          <p>Cut from 6oz waxed cotton canvas with a brushed-flannel lining through the body, the Field Anorak trades zips for a storm-flap placket that keeps rain out without a single moving part to fail. A single kangaroo pocket sits low across the chest, sized for a folded map or a phone.</p>
-          <p>Wax finish is reapplied by hand at the workshop before dispatch. Expect the colour to darken and the hand to soften over the first few wears — that's the wax curing, not a fault.</p>
-        </div>
+      }
 
-        <!-- additional attributes (was: table.additional-attributes) -->
-        <div>
-          <h3 class="font-display font-600 text-sm uppercase tracking-wide mb-4">Specification</h3>
-          <dl class="divide-y divide-hair text-sm">
-            <div class="flex justify-between py-3"><dt class="text-mute">Material</dt><dd>6oz waxed cotton</dd></div>
-            <div class="flex justify-between py-3"><dt class="text-mute">Lining</dt><dd>Brushed flannel</dd></div>
-            <div class="flex justify-between py-3"><dt class="text-mute">Fit</dt><dd>Regular</dd></div>
-            <div class="flex justify-between py-3"><dt class="text-mute">Care</dt><dd>Wipe clean, re-wax yearly</dd></div>
-            <div class="flex justify-between py-3"><dt class="text-mute">Made in</dt><dd>Portugal</dd></div>
-          </dl>
-        </div>
-      </div>
-    </div>
+      var vm = new ProductViewModel();
+      ko.applyBindings(vm, document.getElementById('product-page'));
 
-    <!-- ============ RELATED PRODUCTS (was: .block.related) ============ -->
-    <div class="mt-16 border-t border-hair pt-10">
-      <h2 class="font-display text-xl font-700 mb-6">You may also like</h2>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <a href="#" class="group">
-          <div class="aspect-square bg-surface rounded-sm overflow-hidden mb-3">
-            <img src="https://images.unsplash.com/photo-1544441893-675973e31985?w=400&q=80" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-          </div>
-          <p class="text-sm font-medium">Wool Beanie</p>
-          <p class="text-sm text-mute">£28.00</p>
-        </a>
-        <a href="#" class="group">
-          <div class="aspect-square bg-surface rounded-sm overflow-hidden mb-3">
-            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-          </div>
-          <p class="text-sm font-medium">Trail Sneaker</p>
-          <p class="text-sm text-mute">£95.00</p>
-        </a>
-        <a href="#" class="group">
-          <div class="aspect-square bg-surface rounded-sm overflow-hidden mb-3">
-            <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&q=80" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-          </div>
-          <p class="text-sm font-medium">Canvas Tote</p>
-          <p class="text-sm text-mute">£38.00</p>
-        </a>
-        <a href="#" class="group">
-          <div class="aspect-square bg-surface rounded-sm overflow-hidden mb-3">
-            <img src="https://images.unsplash.com/photo-1520975954732-35dd22299614?w=400&q=80" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-          </div>
-          <p class="text-sm font-medium">Selvedge Jean</p>
-          <p class="text-sm text-mute">£110.00</p>
-        </a>
-      </div>
-    </div>
-  </main>
+      $('[data-role="tabs"] .item.title a').on('click', function (event) {
+        event.preventDefault();
+        var tab = $(this).closest('.item.title').data('tab');
+        $('[data-role="tabs"] .item.title').removeClass('active');
+        $(this).closest('.item.title').addClass('active');
+        $('[data-role="tabs"] .item.content').removeClass('active');
+        $('[data-content="' + tab + '"]').addClass('active');
+      });
 
-  <footer class="border-t border-hair mt-16">
-    <div class="max-w-7xl mx-auto px-6 py-10 text-xs text-mute font-mono flex justify-between">
-      <span>© 2026 FIELD &amp; CO.</span>
-      <span>Template migrated from Magento Luma → Tailwind CSS</span>
-    </div>
-  </footer>
+      $('.fotorama__nav-wrap button').on('click', function () {
+        $('.fotorama__nav-wrap button').removeClass('selected');
+        $(this).addClass('selected');
+      });
 
+      $('.fotorama__nav-wrap button').first().addClass('selected');
+
+      $('#colorOptions .swatch-option').on('click', function () {
+        var color = $(this).data('color');
+        $('#colorOptions .swatch-option').removeClass('selected');
+        $('#colorOptions .swatch-option').attr('aria-pressed', 'false');
+        $(this).addClass('selected');
+        $(this).attr('aria-pressed', 'true');
+        $('#selectedColorValue').text(color);
+        vm.selectedColor = color;
+      });
+
+      $('#sizeOptions .swatch-option').on('click', function () {
+        var size = $(this).data('size');
+        $('#sizeOptions .swatch-option').removeClass('selected');
+        $('#sizeOptions .swatch-option').attr('aria-pressed', 'false');
+        $(this).addClass('selected');
+        $(this).attr('aria-pressed', 'true');
+        $('#selectedSizeValue').text(size);
+        vm.selectedSize = size;
+      });
+
+      $('a[href="#"]').on('click', function (event) {
+        event.preventDefault();
+      });
+      });
+    }
+  </script>
 </body>
 </html>
